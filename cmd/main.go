@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"log"
+	"github.com/sirupsen/logrus"
 	"os"
 
 	restgin "github.com/DiasOrazbaev/RestGIN"
@@ -15,14 +15,14 @@ import (
 
 func main() {
 	if err := initConfig(); err != nil {
-		log.Fatalf("Failed init config: %s\n", err.Error())
+		logrus.Fatalf("Failed init config: %s\n", err.Error())
 	}
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Failed to loading env variables: %s\n", err.Error())
+		logrus.Fatalf("Failed to loading env variables: %s\n", err.Error())
 	}
 
-	log.Println("Config correct initialized")
+	logrus.Println("Config correct initialized")
 
 	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     viper.GetString("db.host"),
@@ -34,10 +34,10 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatalf("Failed to connection to db: %s\n", err.Error())
+		logrus.Fatalf("Failed to connection to db: %s\n", err.Error())
 	}
 
-	log.Println("Correctly connected to DB")
+	logrus.Println("Correctly connected to DB")
 
 	repos := repository.NewRepository(db)
 	newService := service.NewService(repos)
@@ -45,7 +45,7 @@ func main() {
 
 	server := new(restgin.Server)
 	if err := server.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		log.Fatalln(err.Error())
+		logrus.Fatalln(err.Error())
 	}
 }
 
