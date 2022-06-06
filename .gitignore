@@ -1,2 +1,4 @@
 .vscode
 go.sum
+.env
+.idea
